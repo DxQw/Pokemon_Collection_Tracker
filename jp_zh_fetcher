@@ -1,0 +1,131 @@
+from concurrent.futures import ThreadPoolExecutor
+import os
+import re
+import requests
+
+OUTPUT_DIR = "./secret_rares_all"
+
+# Regional search endpoints for Japanese and Traditional Chinese card sets
+# (Fetches set indices with card lists)
+ZH_SET_INDEX = (
+    "https://asia.pokemon-card.com/tw/card-search/list/?keyword=&expansion="
+)
+
+session = requests.Session()
+session.headers.update(
+    {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        )
+    }
+)
+
+
+def parse_secret_rare_status(card_number_str):
+    """Parses a card number string like '101/090' or 'SV4a_105/090'.
+
+    Returns True if card_num > set_total.
+    """
+    match = re.search(r"(\d+)\s*/\s*(\d+)", card_number_str)
+    if match:
+        card_num = int(match.group(1))
+        set_total = int(match.group(2))
+        return card_num > set_total
+    return False
+
+
+def download_card_image(card_id, lang, image_url):
+    """Downloads card image if it meets the Secret Rare criteria."""
+    clean_id = card_id.replace("/", "_").replace("-", "_")
+    save_path = os.path.join(OUTPUT_DIR, lang, f"{clean_id}.png")
+
+    if os.path.exists(save_path):
+        return
+
+    try:
+        resp = session.get(image_url, timeout=10)
+        if resp.status_code == 200:
+            os.makedirs(os.path.dirname(save_path), exist_ok=True)
+            with open(save_path, "wb") as f:
+                f.write(resp.content)
+            print(f"✓ [{lang.upper()}] Saved Secret Rare: {card_id}")
+    except Exception as e:
+        print(f"✗ [{lang.upper()}] Failed to download {card_id}: {e}")
+
+
+def process_tcgdex_fallback(card_summary, lang):
+    """Inspects TCGdex cards using the number ratio rule."""
+    card_id = card_summary.get("id", "")
+    local_id = card_summary.get("localId", "")
+
+    # Query detailed info if needed to parse full set number (e.g., 101/090)
+    detail_url = f"https://api.tcgdex.net/v2/{lang}/cards/{card_id}"
+    try:
+        resp = session.get(detail_url, timeout=5)
+        if resp.status_code != 200:
+            return
+        card_data = resp.json()
+    except Exception:
+        return
+
+    # Check category: Exclude Trainer/Energy if you only want Pokémon
+    category = str(card_data.get("category", "")).lower()
+    if "pokemon" not in category and "pokémon" not in category:
+        return
+
+    # 1. First check if rarity tag directly indicates Secret Rare / Ultra Rare / Art Rare
+    rarity = str(card_data.get("rarity", "")).lower()
+    target_rarities = [
+        "ar",
+        "sar",
+        "chr",
+        "csr",
+        "sr",
+        "ur",
+        "hr",
+        "illustration rare",
+        "special illustration rare",
+        "ultra rare",
+        "secret rare",
+    ]
+
+    is_target_rarity = any(r in rarity for r in target_rarities)
+
+    # 2. Second check: Fallback to the Card Number > Set Total threshold rule
+    # TCGdex usually nests set size under card_data['set']['cardCount']['official']
+    official_count = card_data.get("set", {}).get("cardCount", {}).get("official")
+    is_num_exceeded = False
+
+    if local_id.isdigit() and official_count:
+        is_num_exceeded = int(local_id) > int(official_count)
+
+    if is_target_rarity or is_num_exceeded:
+        raw_image = card_data.get("image", "")
+        if raw_image:
+            download_card_image(
+                card_id, lang, f"{raw_image}/high.jpg"
+            )
+
+
+def main():
+    print("Starting Secret Rare (AR, SAR, CHR, CSR, SR, UR) Downloader...\n")
+
+    # Fetch via TCGdex index applying the threshold + rarity check
+    for lang in ["zh-tw", "ja", "en"]:
+        print(f"[+] Processing {lang.upper()} card index...")
+        try:
+            resp = session.get(f"https://api.tcgdex.net/v2/{lang}/cards")
+            if resp.status_code == 200:
+                cards = resp.json()
+                print(f"    Inspecting {len(cards)} cards...")
+                with ThreadPoolExecutor(max_workers=15) as executor:
+                    executor.map(
+                        process_tcgdex_fallback,
+                        [(card, lang) for card in cards],
+                    )
+        except Exception as e:
+            print(f"[-] Error loading {lang}: {e}")
+
+
+if __name__ == "__main__":
+    main()
