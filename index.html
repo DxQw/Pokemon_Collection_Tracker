@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pokémon Cards Vault</title>
+  <title>Pokémon Vault & Interactive Binder</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -12,19 +12,17 @@
       --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
       --card-bg: rgba(255, 255, 255, 0.04);
       --card-border: rgba(255, 255, 255, 0.08);
-      --glass-bg: rgba(15, 23, 42, 0.75);
+      --glass-bg: rgba(15, 23, 42, 0.85);
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --accent: #6366f1;
       --accent-glow: rgba(99, 102, 241, 0.35);
-      --card-radius: 16px;
+      --card-radius: 12px;
+      --grid-cols: 3;
+      --grid-rows: 3;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
@@ -34,7 +32,6 @@
       padding-bottom: 60px;
     }
 
-    /* Sticky Glassmorphic Header */
     header {
       position: sticky;
       top: 0;
@@ -45,25 +42,16 @@
       border-bottom: 1px solid var(--card-border);
       padding: 16px 24px;
       display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
+      flex-direction: column;
       gap: 16px;
     }
 
-    .brand {
+    .header-top {
       display: flex;
+      justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
       gap: 12px;
-    }
-
-    .brand-icon {
-      width: 32px;
-      height: 32px;
-      background: linear-gradient(135deg, #ef4444 50%, #f8fafc 50%);
-      border-radius: 50%;
-      border: 3px solid #0f172a;
-      box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
     }
 
     .brand h1 {
@@ -74,11 +62,36 @@
       -webkit-text-fill-color: transparent;
     }
 
-    .search-box {
-      position: relative;
-      width: 100%;
-      max-width: 380px;
+    .tab-buttons { display: flex; gap: 8px; }
+
+    .tab-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 99px;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: all 0.2s;
     }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .search-box { position: relative; flex: 1 1 200px; }
 
     .search-box input {
       width: 100%;
@@ -87,15 +100,8 @@
       border: 1px solid var(--card-border);
       border-radius: 99px;
       color: var(--text-main);
-      font-size: 0.9rem;
+      font-size: 0.875rem;
       outline: none;
-      transition: all 0.25s ease;
-    }
-
-    .search-box input:focus {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: var(--accent);
-      box-shadow: 0 0 16px var(--accent-glow);
     }
 
     .search-icon {
@@ -108,195 +114,669 @@
       fill: var(--text-muted);
     }
 
-    /* Main Container */
-    main {
-      max-width: 1280px;
-      margin: 32px auto 0;
-      padding: 0 24px;
+    select, input[type="number"] {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--card-border);
+      border-radius: 99px;
+      color: var(--text-main);
+      padding: 10px 16px;
+      font-size: 0.875rem;
+      outline: none;
+      cursor: pointer;
     }
+
+    select option { background: #0f172a; color: #f8fafc; }
+
+    .binder-controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .binder-controls label { font-size: 0.875rem; color: var(--text-muted); }
+    .binder-controls input[type="number"] { width: 70px; text-align: center; }
+
+    main { max-width: 1400px; margin: 24px auto 0; padding: 0 24px; }
 
     .stats-bar {
       margin-bottom: 24px;
       font-size: 0.875rem;
       color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    /* Card Grid */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 24px;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 20px;
     }
 
-    /* Card Styling & Hover Effects */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: var(--card-radius);
-      padding: 12px;
+      padding: 10px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
       position: relative;
-      overflow: hidden;
     }
 
     .card:hover {
-      transform: translateY(-8px) scale(1.02);
+      transform: translateY(-4px);
       border-color: rgba(99, 102, 241, 0.4);
-      box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.5), 0 0 20px var(--accent-glow);
+      box-shadow: 0 0 16px var(--accent-glow);
     }
 
     .image-wrapper {
       width: 100%;
       aspect-ratio: 2.5 / 3.5;
-      border-radius: 10px;
+      border-radius: 8px;
       overflow: hidden;
       background: rgba(255, 255, 255, 0.03);
+    }
+
+    .card img { width: 100%; height: 100%; object-fit: cover; }
+
+    .card-info { width: 100%; margin-top: 8px; text-align: center; }
+    .card-title { font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-meta { display: flex; justify-content: center; align-items: center; gap: 4px; font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; flex-wrap: wrap; }
+
+    .badge-rarity {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 600;
+    }
+
+    .btn-add {
+      margin-top: 8px;
+      width: 100%;
+      padding: 6px;
+      background: rgba(99, 102, 241, 0.2);
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      color: #a5b4fc;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .btn-add:hover { background: var(--accent); color: #fff; }
+    .btn-add.added { background: rgba(34, 197, 94, 0.2); border-color: rgba(34, 197, 94, 0.4); color: #4ade80; }
+
+    /* Binder Page Styling */
+    .binder-page {
+      display: grid;
+      grid-template-columns: repeat(var(--grid-cols), 1fr);
+      grid-template-rows: repeat(var(--grid-rows), auto);
+      gap: 16px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 2px solid var(--card-border);
+      border-radius: 16px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .binder-slot {
+      aspect-ratio: 2.5 / 3.5;
+      background: rgba(255, 255, 255, 0.02);
+      border: 2px dashed rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-    }
-
-    .card img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: opacity 0.3s ease;
-    }
-
-    .card-info {
-      width: 100%;
-      margin-top: 12px;
-      text-align: center;
-    }
-
-    .card-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      white-space: nowrap;
+      position: relative;
       overflow: hidden;
-      text-overflow: ellipsis;
+      cursor: pointer;
+      transition: border-color 0.2s, background-color 0.2s;
     }
 
-    .card-id {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-top: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+    .binder-slot.drag-over {
+      border-color: var(--accent);
+      background: rgba(99, 102, 241, 0.15);
     }
 
-    /* Load More Button */
-    .action-container {
+    .binder-slot.filled {
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      cursor: pointer;
+    }
+
+    .binder-slot img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+
+    .binder-pagination {
       display: flex;
       justify-content: center;
-      margin-top: 48px;
+      align-items: center;
+      gap: 16px;
+      margin-top: 24px;
     }
+
+    .action-container { display: flex; justify-content: center; margin-top: 36px; }
 
     .btn-load {
       background: linear-gradient(135deg, var(--accent), #4f46e5);
       color: white;
       border: none;
-      padding: 14px 32px;
-      font-size: 0.95rem;
+      padding: 12px 28px;
+      font-size: 0.9rem;
       font-weight: 600;
       border-radius: 99px;
       cursor: pointer;
-      box-shadow: 0 4px 15px var(--accent-glow);
-      transition: all 0.2s ease;
     }
 
-    .btn-load:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px var(--accent-glow);
+    .view-panel { display: none; }
+    .view-panel.active { display: block; }
+
+    /* Modal Overlay */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
     }
 
-    /* Skeleton Loading State */
-    .skeleton {
-      animation: pulse 1.5s infinite ease-in-out;
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
     }
 
-    @keyframes pulse {
-      0%, 100% { opacity: 0.4; }
-      50% { opacity: 0.8; }
+    .modal-content {
+      background: rgba(30, 27, 75, 0.95);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 420px;
+      width: 90%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      box-shadow: 0 0 24px var(--accent-glow);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .modal-img-wrapper {
+      width: 200px;
+      aspect-ratio: 2.5 / 3.5;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .modal-img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .modal-details {
+      text-align: center;
+      width: 100%;
+    }
+
+    .modal-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+    .modal-meta { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px; }
+
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .modal-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-modal-action {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-modal-danger {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.5);
+      color: #f87171;
+    }
+
+    .btn-modal-danger:hover {
+      background: #ef4444;
+      color: white;
     }
   </style>
 </head>
 <body>
 
   <header>
-    <div class="brand">
-      <div class="brand-icon"></div>
-      <h1>Pokémon Vault</h1>
+    <div class="header-top">
+      <div class="brand">
+        <h1>Pokémon Vault & Binder</h1>
+      </div>
+
+      <div class="tab-buttons">
+        <button class="tab-btn active" onclick="switchTab(event, 'tracker')">Card Tracker</button>
+        <button class="tab-btn" onclick="switchTab(event, 'binder')">Virtual Binder (<span id="binderCount">0</span>)</button>
+      </div>
     </div>
 
-    <div class="search-box">
-      <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-      <input type="text" id="searchInput" placeholder="Search Pokémon name or ID..." oninput="handleSearch()">
+    <div id="trackerControls" class="controls">
+      <div class="search-box">
+        <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        <input type="text" id="searchInput" placeholder="Search Pokémon or Card ID..." oninput="filterAndSortCards()">
+      </div>
+
+      <select id="sortFilter" onchange="filterAndSortCards()">
+        <option value="idAsc">Card ID (A - Z)</option>
+        <option value="nameAsc">Name (A - Z)</option>
+      </select>
+
+      <select id="setFilter" onchange="filterAndSortCards()">
+        <option value="">All Sets (Excludes PTCGP)</option>
+      </select>
+
+      <select id="rarityFilter" onchange="fetchByRarity()">
+        <option value="">All Rarities</option>
+        <option value="Illustration Rare">Illustration Rare (IR)</option>
+        <option value="Special Illustration Rare">Special Illustration Rare (SIR)</option>
+        <option value="Trainer Gallery">Trainer Gallery (TG)</option>
+        <option value="Hyper Rare">Hyper Rare (Gold)</option>
+        <option value="Ultra Rare">Ultra Rare / Full Art</option>
+        <option value="Secret Rare">Secret Rare</option>
+        <option value="Double Rare">Double Rare (ex/V)</option>
+        <option value="Promo">Promo</option>
+      </select>
+    </div>
+
+    <div id="binderControls" class="controls view-panel">
+      <div class="binder-controls">
+        <label>Columns (1-9):</label>
+        <input type="number" id="binderCols" min="1" max="9" value="3" onchange="updateBinderGrid()">
+        
+        <label>Rows (1-9):</label>
+        <input type="number" id="binderRows" min="1" max="9" value="3" onchange="updateBinderGrid()">
+      </div>
     </div>
   </header>
 
   <main>
-    <div class="stats-bar" id="statsBar">Loading card collection...</div>
-    <div class="grid" id="cardContainer"></div>
-    
-    <div class="action-container">
-      <button id="loadMoreBtn" class="btn-load" style="display: none;" onclick="loadNextBatch()">Load More Cards</button>
+    <div id="trackerPanel" class="view-panel active">
+      <div class="stats-bar" id="statsBar">Loading collection...</div>
+      <div class="grid" id="cardContainer"></div>
+
+      <div class="action-container">
+        <button id="loadMoreBtn" class="btn-load" style="display: none;" onclick="loadNextBatch()">Load More Cards</button>
+      </div>
+    </div>
+
+    <div id="binderPanel" class="view-panel">
+      <div class="stats-bar">
+        <span id="binderStats">Page 1</span>
+      </div>
+
+      <div class="binder-page" id="binderPage"></div>
+
+      <div class="binder-pagination">
+        <button class="tab-btn" 
+                onclick="changeBinderPage(-1)" 
+                ondragover="handlePageNavDragOver(event, -1)">Previous Page</button>
+        
+        <span id="pageIndicator" style="font-size:0.875rem; color:var(--text-muted);">Page 1 of 1</span>
+        
+        <button class="tab-btn" 
+                onclick="changeBinderPage(1)" 
+                ondragover="handlePageNavDragOver(event, 1)">Next Page</button>
+      </div>
     </div>
   </main>
 
+  <!-- Card Details Modal -->
+  <div id="cardModal" class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="modal-img-wrapper">
+        <img id="modalImg" src="" alt="Card Details">
+      </div>
+      <div class="modal-details">
+        <div id="modalTitle" class="modal-title">Card Name</div>
+        <div id="modalMeta" class="modal-meta">ID | Rarity</div>
+      </div>
+      <div class="modal-actions">
+        <div class="modal-row">
+          <label style="font-size: 0.85rem; color: var(--text-muted);">Move to:</label>
+          <select id="modalPageSelect"></select>
+          <button class="btn-modal-action" onclick="moveCardFromModal()">Move</button>
+        </div>
+        <button class="btn-modal-action btn-modal-danger" onclick="removeCardFromModal()">Remove from Binder</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // Global State Management
     let allCards = [];
     let filteredCards = [];
+    let myBinder = [];
     let currentPage = 1;
     const pageSize = 36;
+    let ptcgpSetIds = new Set();
+
+    let binderCols = 3;
+    let binderRows = 3;
+    let currentBinderPage = 1;
+    let draggedIndex = null;
+    let pageNavTimer = null;
+    let selectedCardIndex = null;
+    let db;
+
+    // ==========================================
+    // 1. IndexedDB Local Storage
+    // ==========================================
+    function initDatabase() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open("PokemonBinderDB", 1);
+        request.onupgradeneeded = (e) => {
+          db = e.target.result;
+          if (!db.objectStoreNames.contains("binderStore")) {
+            db.createObjectStore("binderStore", { keyPath: "slotIndex" });
+          }
+        };
+        request.onsuccess = (e) => {
+          db = e.target.result;
+          resolve(db);
+        };
+        request.onerror = (e) => reject("Database error: " + e.target.errorCode);
+      });
+    }
+
+    async function saveBinderToDB() {
+      if (!db) return;
+      const tx = db.transaction("binderStore", "readwrite");
+      const store = tx.objectStore("binderStore");
+      store.clear();
+      myBinder.forEach((card, idx) => {
+        if (card) {
+          store.put({ ...card, slotIndex: idx });
+        }
+      });
+    }
+
+    async function loadBinderFromDB() {
+      if (!db) return [];
+      return new Promise((resolve) => {
+        const tx = db.transaction("binderStore", "readonly");
+        const store = tx.objectStore("binderStore");
+        const request = store.getAll();
+        request.onsuccess = () => {
+          const loadedBinder = [];
+          request.result.forEach(item => {
+            loadedBinder[item.slotIndex] = item;
+          });
+          resolve(loadedBinder);
+        };
+      });
+    }
+
+    // ==========================================
+    // 2. API & Data Handling
+    // ==========================================
+    function isPtcgp(item) {
+      if (!item) return false;
+      if (item.series && item.series.id === 'tcgp') return true;
+      const id = (item.id || '').toLowerCase();
+      const setId = (item.setId || item.id || '').split('-')[0].toLowerCase();
+      if (ptcgpSetIds.has(setId) || ptcgpSetIds.has(id)) return true;
+      const pocketPattern = /^(tcgp|pocket|[ab]\d+[a-z]?|p-[ab])$/i;
+      return pocketPattern.test(setId) || pocketPattern.test(id);
+    }
 
     async function init() {
-      showSkeletons();
+      await initDatabase();
+      myBinder = await loadBinderFromDB();
+      updateBinderCount();
+
+      try {
+        const setsResponse = await fetch("https://api.tcgdex.net/v2/en/sets");
+        if (setsResponse.ok) {
+          const setsData = await setsResponse.json();
+          populateSetDropdown(setsData);
+        }
+      } catch (e) {
+        console.warn("Could not load sets:", e);
+      }
+
+      await loadAllCards();
+    }
+
+    function populateSetDropdown(sets) {
+      const setSelect = document.getElementById("setFilter");
+      const physicalSets = sets.filter(s => !isPtcgp(s));
+
+      const requiredTgSets = [
+        { id: 'swsh9tg', name: 'Brilliant Stars Trainer Gallery' },
+        { id: 'swsh10tg', name: 'Astral Radiance Trainer Gallery' },
+        { id: 'swsh11tg', name: 'Lost Origin Trainer Gallery' },
+        { id: 'swsh12tg', name: 'Silver Tempest Trainer Gallery' }
+      ];
+
+      requiredTgSets.forEach(tgSet => {
+        if (!physicalSets.some(s => s.id.toLowerCase() === tgSet.id)) {
+          physicalSets.push(tgSet);
+        }
+      });
+
+      physicalSets.sort((a, b) => a.name.localeCompare(b.name));
+
+      physicalSets.forEach(set => {
+        const option = document.createElement("option");
+        option.value = set.id.toLowerCase();
+        option.textContent = `${set.name} (${set.id.toUpperCase()})`;
+        setSelect.appendChild(option);
+      });
+    }
+
+    async function loadAllCards() {
+      document.getElementById("statsBar").textContent = "Fetching cards...";
       try {
         const response = await fetch("https://api.tcgdex.net/v2/en/cards");
+        if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+        
         const data = await response.json();
+        
+        allCards = data
+          .filter(c => c.image && !isPtcgp(c))
+          .map(card => ({
+            id: card.id,
+            localId: card.localId || card.id,
+            name: card.name || card.id,
+            rarity: card.rarity || "",
+            setId: card.id.split('-')[0],
+            image: `${card.image}/high.webp`
+          }));
 
-        const seenIds = new Set();
-        allCards = [];
-
-        data.forEach(card => {
-          if (card.image && !seenIds.has(card.id)) {
-            seenIds.add(card.id);
-            allCards.push({
-              id: card.id,
-              name: card.name || card.id,
-              image: `${card.image}/high.webp`
-            });
-          }
-        });
-
-        filteredCards = [...allCards];
-        renderBatch();
+        filterAndSortCards();
       } catch (err) {
-        document.getElementById('cardContainer').innerHTML = 
-          `<p style="grid-column: 1/-1; text-align:center; color: #f87171; padding: 40px;">
-            Failed to connect to TCGdex API. Please check your internet connection.
-          </p>`;
+        document.getElementById('cardContainer').innerHTML = `<p style="grid-column:1/-1; text-align:center; color:#f87171;">Failed to load data from TCGdex API.</p>`;
       }
     }
 
-    function showSkeletons() {
-      const container = document.getElementById("cardContainer");
-      container.innerHTML = Array(12).fill(0).map(() => `
-        <div class="card skeleton">
-          <div class="image-wrapper"></div>
-          <div class="card-info">
-            <div style="height: 16px; background: rgba(255,255,255,0.1); border-radius: 4px; margin-bottom: 8px;"></div>
-            <div style="height: 12px; background: rgba(255,255,255,0.05); border-radius: 4px; width: 50%; margin: 0 auto;"></div>
-          </div>
-        </div>
-      `).join('');
+    async function fetchByRarity() {
+      const selectedRarity = document.getElementById("rarityFilter").value;
+      if (!selectedRarity) {
+        await loadAllCards();
+        return;
+      }
+
+      document.getElementById("statsBar").textContent = `Querying TCGdex for ${selectedRarity} cards...`;
+
+      try {
+        let cardsResult = [];
+        if (selectedRarity === "Trainer Gallery") {
+          cardsResult = allCards.filter(c => /-tg\d+/i.test(c.id));
+        } else {
+          const response = await fetch(`https://api.tcgdex.net/v2/en/rarities/${encodeURIComponent(selectedRarity)}`);
+          const data = await response.json();
+          if (data && data.cards) {
+            cardsResult = data.cards.filter(c => c.image && !isPtcgp(c));
+          }
+        }
+
+        if (cardsResult.length > 0) {
+          allCards = cardsResult.map(card => ({
+            id: card.id,
+            localId: card.localId || card.id,
+            name: card.name || card.id,
+            rarity: selectedRarity,
+            setId: card.id.split('-')[0],
+            image: card.image ? `${card.image}/high.webp` : ''
+          }));
+
+          filterAndSortCards();
+        } else {
+          document.getElementById("statsBar").textContent = `No cards found matching ${selectedRarity}.`;
+        }
+      } catch (e) {
+        document.getElementById("statsBar").textContent = `Error loading ${selectedRarity}.`;
+      }
     }
 
+    async function filterAndSortCards() {
+      const searchQuery = document.getElementById("searchInput").value.toLowerCase().trim();
+      const selectedSet = document.getElementById("setFilter").value.toLowerCase();
+      const sortOption = document.getElementById("sortFilter").value;
+
+      currentPage = 1;
+
+      const tgMapping = {
+        'swsh9': 'swsh9tg',
+        'swsh10': 'swsh10tg',
+        'swsh11': 'swsh11tg',
+        'swsh12': 'swsh12tg'
+      };
+
+      if (tgMapping[selectedSet] || selectedSet.includes('tg')) {
+        document.getElementById("statsBar").textContent = "Fetching cards...";
+        try {
+          let mainSetId = selectedSet.replace('tg', '');
+          let tgSetId = tgMapping[mainSetId];
+
+          let fetchPromises = [fetch(`https://api.tcgdex.net/v2/en/sets/${selectedSet}`)];
+          
+          if (!selectedSet.includes('tg') && tgSetId) {
+            fetchPromises.push(fetch(`https://api.tcgdex.net/v2/en/sets/${tgSetId}`));
+          }
+
+          const responses = await Promise.all(fetchPromises);
+          const dataResults = await Promise.all(responses.map(r => r.json()));
+
+          let cardsToUse = [];
+          if (selectedSet.includes('tg')) {
+            cardsToUse = dataResults[0].cards || [];
+          } else {
+            cardsToUse = [...(dataResults[0].cards || [])];
+            if (dataResults[1] && dataResults[1].cards) {
+              cardsToUse.push(...dataResults[1].cards);
+            }
+          }
+
+          filteredCards = cardsToUse.map(card => {
+            const rawLocalId = card.localId || (card.id ? card.id.split('-')[1] : '');
+            const cleanNum = rawLocalId.replace(/[^0-9]/g, '').replace(/^0+/, '');
+            const isTG = card.id && card.id.toLowerCase().includes("tg");
+            const cardSetId = card.id ? card.id.split('-')[0].toLowerCase() : selectedSet;
+            const baseSet = cardSetId.replace('tg', '');
+
+            let imgUrl = card.image ? `${card.image}/high.webp` : '';
+
+            if (!imgUrl) {
+              if (isTG) {
+                imgUrl = `https://assets.tcgdex.net/en/swsh/${baseSet}/tg${cleanNum}/high.webp`;
+              } else {
+                imgUrl = `https://assets.tcgdex.net/en/swsh/${baseSet}/${cleanNum}/high.webp`;
+              }
+            }
+
+            return {
+              id: card.id,
+              localId: rawLocalId,
+              name: card.name || card.id,
+              rarity: card.rarity || "",
+              setId: cardSetId,
+              image: imgUrl
+            };
+          }).filter(c => (!searchQuery || c.name.toLowerCase().includes(searchQuery) || c.id.toLowerCase().includes(searchQuery)));
+
+          filteredCards.sort((a, b) => {
+            if (sortOption === "nameAsc") return a.name.localeCompare(b.name);
+            if (sortOption === "idAsc") return a.id.localeCompare(b.id);
+            return 0;
+          });
+
+          renderBatch();
+          return;
+        } catch (e) {
+          console.error("Error fetching set with Trainer Gallery:", e);
+        }
+      }
+
+      // Standard filtering for all other sets
+      filteredCards = allCards.filter(card => {
+        const matchesSearch = !searchQuery || 
+          card.id.toLowerCase().includes(searchQuery) || 
+          card.name.toLowerCase().includes(searchQuery);
+
+        const matchesSet = !selectedSet || card.setId.toLowerCase() === selectedSet;
+        return matchesSearch && matchesSet;
+      });
+
+      filteredCards.sort((a, b) => {
+        if (sortOption === "nameAsc") return a.name.localeCompare(b.name);
+        if (sortOption === "idAsc") return a.id.localeCompare(b.id);
+        return 0;
+      });
+
+      renderBatch();
+    }
+
+    // ==========================================
+    // 3. Card Tracker UI
+    // ==========================================
     function renderBatch() {
       const container = document.getElementById("cardContainer");
       const loadBtn = document.getElementById("loadMoreBtn");
@@ -308,27 +788,31 @@
       stats.textContent = `Showing ${cardsToDisplay.length} of ${filteredCards.length} cards`;
 
       if (cardsToDisplay.length === 0) {
-        container.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color: var(--text-muted); padding: 60px;">No cards found matching your search.</p>`;
+        container.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color: var(--text-muted); padding: 60px;">No cards match your search.</p>`;
         loadBtn.style.display = 'none';
         return;
       }
 
-      container.innerHTML = cardsToDisplay.map(card => `
-        <div class="card">
-          <div class="image-wrapper">
-            <img 
-              src="${card.image}" 
-              alt="${card.name}" 
-              loading="lazy"
-              onerror="this.onerror=null; this.src='https://assets.tcgdex.net/en/assets/card_back.png';"
-            >
+      container.innerHTML = cardsToDisplay.map(card => {
+        const inBinder = myBinder.some(b => b && b.id === card.id);
+        return `
+          <div class="card">
+            <div class="image-wrapper">
+              <img src="${card.image}" alt="${card.name}" loading="lazy" onerror="this.onerror=null; this.src='https://assets.tcgdex.net/en/assets/card_back.png';">
+            </div>
+            <div class="card-info">
+              <div class="card-title">${card.name}</div>
+              <div class="card-meta">
+                <span>${card.id}</span>
+                ${card.rarity ? `<span class="badge-rarity">${card.rarity}</span>` : ''}
+              </div>
+            </div>
+            <button class="btn-add ${inBinder ? 'added' : ''}" onclick="toggleBinderCard('${card.id}')">
+              ${inBinder ? 'In Binder ✓' : '+ Add to Binder'}
+            </button>
           </div>
-          <div class="card-info">
-            <div class="card-title" title="${card.name}">${card.name}</div>
-            <div class="card-id">${card.id}</div>
-          </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
 
       loadBtn.style.display = endIndex < filteredCards.length ? 'inline-block' : 'none';
     }
@@ -338,18 +822,235 @@
       renderBatch();
     }
 
-    function handleSearch() {
-      const query = document.getElementById("searchInput").value.toLowerCase().trim();
-      currentPage = 1;
+    function toggleBinderCard(cardId) {
+      const card = allCards.find(c => c.id === cardId) || filteredCards.find(c => c.id === cardId);
+      if (!card) return;
 
-      filteredCards = allCards.filter(card => 
-        !query || 
-        card.id.toLowerCase().includes(query) || 
-        card.name.toLowerCase().includes(query)
-      );
+      const index = myBinder.findIndex(b => b && b.id === cardId);
+      if (index > -1) {
+        myBinder[index] = null;
+      } else {
+        const emptyIndex = myBinder.findIndex(slot => !slot);
+        if (emptyIndex !== -1) {
+          myBinder[emptyIndex] = card;
+        } else {
+          myBinder.push(card);
+        }
+      }
+
+      saveBinderToDB();
+      updateBinderCount();
       renderBatch();
+      renderBinderPage();
     }
 
+    function updateBinderCount() {
+      const totalCount = myBinder.filter(Boolean).length;
+      document.getElementById("binderCount").textContent = totalCount;
+    }
+
+    // ==========================================
+    // 4. Virtual Binder UI
+    // ==========================================
+    function updateBinderGrid() {
+      binderCols = Math.min(9, Math.max(1, parseInt(document.getElementById("binderCols").value) || 1));
+      binderRows = Math.min(9, Math.max(1, parseInt(document.getElementById("binderRows").value) || 1));
+      
+      document.documentElement.style.setProperty('--grid-cols', binderCols);
+      document.documentElement.style.setProperty('--grid-rows', binderRows);
+
+      currentBinderPage = 1;
+      renderBinderPage();
+    }
+
+    function renderBinderPage() {
+      const slotsPerPage = binderCols * binderRows;
+      const totalCards = myBinder.filter(Boolean).length;
+      const totalPages = Math.max(1, Math.ceil(Math.max(myBinder.length, 1) / slotsPerPage));
+
+      if (currentBinderPage > totalPages) currentBinderPage = totalPages;
+
+      document.getElementById("binderStats").textContent = `Binder Total: ${totalCards} cards | Layout: ${binderCols}x${binderRows}`;
+      document.getElementById("pageIndicator").textContent = `Page ${currentBinderPage} of ${totalPages}`;
+
+      const startIndex = (currentBinderPage - 1) * slotsPerPage;
+      const binderContainer = document.getElementById("binderPage");
+      let slotsHTML = "";
+
+      for (let i = 0; i < slotsPerPage; i++) {
+        const slotGlobalIndex = startIndex + i;
+        const card = myBinder[slotGlobalIndex];
+
+        if (card) {
+          slotsHTML += `
+            <div class="binder-slot filled" 
+                 draggable="true" 
+                 onclick="openCardModal(${slotGlobalIndex})"
+                 ondragstart="handleDragStart(event, ${slotGlobalIndex})"
+                 ondragover="handleDragOver(event)"
+                 ondragleave="handleDragLeave(event)"
+                 ondrop="handleDrop(event, ${slotGlobalIndex})">
+              <img src="${card.image}" alt="${card.name}">
+            </div>
+          `;
+        } else {
+          slotsHTML += `
+            <div class="binder-slot" 
+                 ondragover="handleDragOver(event)"
+                 ondragleave="handleDragLeave(event)"
+                 ondrop="handleDrop(event, ${slotGlobalIndex})">
+            </div>
+          `;
+        }
+      }
+
+      binderContainer.innerHTML = slotsHTML;
+    }
+
+    // ==========================================
+    // 5. Modal Operations
+    // ==========================================
+    function openCardModal(slotIndex) {
+      selectedCardIndex = slotIndex;
+      const card = myBinder[slotIndex];
+      if (!card) return;
+
+      document.getElementById("modalImg").src = card.image;
+      document.getElementById("modalTitle").textContent = card.name;
+      document.getElementById("modalMeta").textContent = `${card.id} ${card.rarity ? '| ' + card.rarity : ''}`;
+
+      const slotsPerPage = binderCols * binderRows;
+      const totalPages = Math.max(1, Math.ceil(Math.max(myBinder.length, 1) / slotsPerPage));
+      const pageSelect = document.getElementById("modalPageSelect");
+      
+      let optionsHTML = "";
+      for (let p = 1; p <= totalPages + 1; p++) {
+        optionsHTML += `<option value="${p}" ${p === currentBinderPage ? 'selected' : ''}>Page ${p}</option>`;
+      }
+      pageSelect.innerHTML = optionsHTML;
+
+      document.getElementById("cardModal").classList.add("active");
+    }
+
+    function closeModal(e) {
+      if (e && e.target !== e.currentTarget) return;
+      document.getElementById("cardModal").classList.remove("active");
+      selectedCardIndex = null;
+    }
+
+    function moveCardFromModal() {
+      if (selectedCardIndex === null) return;
+      const targetPage = parseInt(document.getElementById("modalPageSelect").value);
+      
+      const slotsPerPage = binderCols * binderRows;
+      const targetStartIndex = (targetPage - 1) * slotsPerPage;
+
+      let destinationIndex = -1;
+      for (let i = 0; i < slotsPerPage; i++) {
+        const checkIdx = targetStartIndex + i;
+        if (!myBinder[checkIdx]) {
+          destinationIndex = checkIdx;
+          break;
+        }
+      }
+
+      if (destinationIndex === -1) {
+        destinationIndex = targetStartIndex;
+      }
+
+      const cardToMove = myBinder[selectedCardIndex];
+      myBinder[selectedCardIndex] = myBinder[destinationIndex] || null;
+      myBinder[destinationIndex] = cardToMove;
+
+      saveBinderToDB();
+      closeModal();
+      renderBinderPage();
+    }
+
+    function removeCardFromModal() {
+      if (selectedCardIndex === null) return;
+      const card = myBinder[selectedCardIndex];
+      if (card) {
+        toggleBinderCard(card.id);
+      }
+      closeModal();
+    }
+
+    // ==========================================
+    // 6. Drag & Drop Operations
+    // ==========================================
+    function handleDragStart(e, index) {
+      draggedIndex = index;
+      e.dataTransfer.effectAllowed = "move";
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.currentTarget.classList.add("drag-over");
+    }
+
+    function handleDragLeave(e) {
+      e.currentTarget.classList.remove("drag-over");
+    }
+
+    function handleDrop(e, targetIndex) {
+      e.preventDefault();
+      e.currentTarget.classList.remove("drag-over");
+
+      if (draggedIndex !== null && draggedIndex !== targetIndex) {
+        const temp = myBinder[targetIndex];
+        myBinder[targetIndex] = myBinder[draggedIndex];
+        myBinder[draggedIndex] = temp;
+
+        saveBinderToDB();
+        renderBinderPage();
+      }
+      draggedIndex = null;
+    }
+
+    function handlePageNavDragOver(e, delta) {
+      e.preventDefault();
+      if (!pageNavTimer) {
+        pageNavTimer = setTimeout(() => {
+          changeBinderPage(delta);
+          pageNavTimer = null;
+        }, 600);
+      }
+    }
+
+    function changeBinderPage(delta) {
+      const slotsPerPage = binderCols * binderRows;
+      const totalPages = Math.max(1, Math.ceil(Math.max(myBinder.length, 1) / slotsPerPage));
+      
+      currentBinderPage += delta;
+      if (currentBinderPage < 1) currentBinderPage = 1;
+      if (currentBinderPage > totalPages) currentBinderPage = totalPages;
+
+      renderBinderPage();
+    }
+
+    // ==========================================
+    // 7. Navigation Tabs
+    // ==========================================
+    function switchTab(e, tab) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+
+      if (tab === 'tracker') {
+        e.target.classList.add('active');
+        document.getElementById('trackerPanel').classList.add('active');
+        document.getElementById('trackerControls').style.display = 'flex';
+        document.getElementById('binderControls').style.display = 'none';
+      } else {
+        e.target.classList.add('active');
+        document.getElementById('binderPanel').classList.add('active');
+        document.getElementById('trackerControls').style.display = 'none';
+        document.getElementById('binderControls').style.display = 'flex';
+        updateBinderGrid();
+      }
+    }
+
+    // Launch Application
     init();
   </script>
 </body>
