@@ -1059,7 +1059,12 @@
     async function saveBinderToDB() {
       await saveLocalBinder();
       if (currentUser && typeof window.saveCloudBinder === "function") {
-        await window.saveCloudBinder(myBinder);
+        try {
+          await window.saveCloudBinder(myBinder);
+        } catch (error) {
+          console.error("Cloud save failed:", error);
+          showToast("Couldn't sync binder to your account (saved locally)", "remove");
+        }
       }
     }
 
@@ -1410,9 +1415,44 @@
       updateAuthUI();
       if (user) {
         closeAuthModal();
-        const cloud = typeof window.loadCloudBinder === 'function' ? await window.loadCloudBinder() : [];
-        myBinder = Array.isArray(cloud) ? cloud : [];
-        await saveLocalBinder();
+        const existingLocal = await loadBinderFromDB();
+        const hasLocalCards = existingLocal.some(Boolean);
+
+        let cloud = null;
+        let cloudLoadFailed = false;
+        try {
+          cloud = typeof window.loadCloudBinder === 'function' ? await window.loadCloudBinder() : [];
+        } catch (error) {
+          console.error("Cloud load failed:", error);
+          cloudLoadFailed = true;
+        }
+        const hasCloudCards = Array.isArray(cloud) && cloud.some(Boolean);
+
+        if (cloudLoadFailed) {
+          // Cloud is unreachable/blocked - never wipe out what's already saved locally.
+          myBinder = existingLocal;
+          showToast("Couldn't reach your saved binder, showing local copy", "remove");
+        } else if (hasCloudCards) {
+          // Cloud has real data - that's the source of truth.
+          myBinder = cloud;
+          await saveLocalBinder();
+        } else if (hasLocalCards) {
+          // Cloud is empty but we have local cards (e.g. first sync, or a save never
+          // made it up before) - keep the local binder and push it up to the cloud
+          // instead of overwriting it with nothing.
+          myBinder = existingLocal;
+          if (typeof window.saveCloudBinder === 'function') {
+            try {
+              await window.saveCloudBinder(myBinder);
+            } catch (error) {
+              console.error("Cloud sync-up failed:", error);
+            }
+          }
+        } else {
+          myBinder = Array.isArray(cloud) ? cloud : [];
+          await saveLocalBinder();
+        }
+
         updateBinderCount();
         if (filteredCards.length) renderBatch();
         renderBinderPage();
@@ -1964,6 +2004,9 @@
     window.saveCloudBinder = async function(cards) {
       const user = auth.currentUser;
       if (!user) return;
+      // Firestore arrays can't contain `undefined`, and can't hold empty slots
+      // either - both silently corrupt the write, so normalize every slot to
+      // an explicit null instead.
       const compact = (cards || []).map(card => card || null);
       await setDoc(doc(firestore, "binders", user.uid), { cards: compact, updatedAt: Date.now() });
     };
@@ -1971,15 +2014,13 @@
     window.loadCloudBinder = async function() {
       const user = auth.currentUser;
       if (!user) return [];
-      try {
-        const snap = await getDoc(doc(firestore, "binders", user.uid));
-        if (!snap.exists()) return [];
-        const cards = snap.data().cards;
-        return Array.isArray(cards) ? cards : [];
-      } catch (error) {
-        console.error("Error loading binder:", error);
-        return [];
-      }
+      // Note: no try/catch here on purpose - a real error (e.g. Firestore
+      // permission-denied) needs to reach applyAuthUser() so it can fall back
+      // to the local binder instead of being silently treated as "no cards".
+      const snap = await getDoc(doc(firestore, "binders", user.uid));
+      if (!snap.exists()) return [];
+      const cards = snap.data().cards;
+      return Array.isArray(cards) ? cards : [];
     };
 
     onAuthStateChanged(auth, (user) => {
