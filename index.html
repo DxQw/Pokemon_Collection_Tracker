@@ -27,7 +27,7 @@
       --accent-glow: rgba(124, 111, 242, 0.4);
       --success: #34d399;
       --danger: #f87171;
-      --card-radius: 14px;
+      --card-radius: 16px;
       --grid-cols: 3;
       --grid-rows: 3;
     }
@@ -55,14 +55,14 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
       background: var(--glass-bg);
       border-bottom: 1px solid var(--card-border);
-      padding: 18px 28px;
+      padding: 14px 28px 16px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
     }
 
     .header-top {
@@ -72,6 +72,75 @@
       flex-wrap: wrap;
       gap: 12px;
     }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .account-area { display: flex; align-items: center; gap: 8px; }
+
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--card-border);
+      border-radius: 99px;
+      padding: 4px 12px 4px 4px;
+      max-width: 240px;
+    }
+
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent-grad);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .user-email {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .btn-login, .btn-logout {
+      border: none;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      border-radius: 99px;
+      padding: 8px 16px;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+
+    .btn-login {
+      background: var(--accent-grad);
+      color: #fff;
+      box-shadow: 0 2px 12px var(--accent-glow);
+    }
+
+    .btn-login:hover { transform: translateY(-1px); }
+
+    .btn-logout {
+      background: rgba(255,255,255,0.06);
+      color: var(--text-muted);
+      border: 1px solid var(--card-border);
+    }
+
+    .btn-logout:hover { color: var(--text-main); background: rgba(255,255,255,0.1); }
 
     .brand { display: flex; align-items: center; gap: 10px; }
 
@@ -126,8 +195,58 @@
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      align-items: center;
+      align-items: flex-end;
       width: 100%;
+    }
+
+    .filter-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .filter-field span {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding-left: 4px;
+    }
+
+    .quick-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .chip {
+      border: 1px solid var(--card-border);
+      background: rgba(255,255,255,0.04);
+      color: var(--text-muted);
+      border-radius: 99px;
+      padding: 6px 12px;
+      font-family: inherit;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+
+    .chip:hover { color: var(--text-main); border-color: rgba(255,255,255,0.2); }
+
+    .chip.active {
+      color: #fff;
+      background: var(--accent-grad);
+      border-color: transparent;
+      box-shadow: 0 2px 10px var(--accent-glow);
+    }
+
+    .chip-tg.active, .chip-tg:hover {
+      background: linear-gradient(135deg, #f59e0b, #ec4899);
+      color: #fff;
+      border-color: transparent;
     }
 
     .search-box { position: relative; flex: 1 1 220px; }
@@ -200,10 +319,28 @@
 
     .stats-bar strong { color: var(--text-main); font-weight: 700; }
 
+    .stat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--card-border);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .stat-pill.tg {
+      background: rgba(236, 72, 153, 0.12);
+      border-color: rgba(236, 72, 153, 0.28);
+      color: #f9a8d4;
+    }
+
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 18px;
     }
 
     .card {
@@ -219,6 +356,11 @@
       animation: cardIn 0.4s ease backwards;
     }
 
+    .card.is-tg {
+      border-color: rgba(236, 72, 153, 0.28);
+      background: linear-gradient(180deg, rgba(236, 72, 153, 0.08), rgba(255,255,255,0.03));
+    }
+
     @keyframes cardIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
@@ -229,6 +371,11 @@
       border-color: rgba(124, 111, 242, 0.5);
       background: var(--card-bg-hover);
       box-shadow: 0 12px 28px rgba(0,0,0,0.35), 0 0 0 1px rgba(124, 111, 242, 0.15), 0 0 24px var(--accent-glow);
+    }
+
+    .card.is-tg:hover {
+      border-color: rgba(236, 72, 153, 0.55);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.35), 0 0 22px rgba(236, 72, 153, 0.28);
     }
 
     .image-wrapper {
@@ -252,6 +399,22 @@
 
     .card:hover img { transform: scale(1.04); }
 
+    .tg-ribbon {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      z-index: 2;
+      background: linear-gradient(135deg, #f59e0b, #ec4899);
+      color: #fff;
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 99px;
+      box-shadow: 0 6px 14px rgba(236, 72, 153, 0.35);
+    }
+
     .card-info { width: 100%; margin-top: 10px; text-align: center; }
     .card-title { font-size: 0.85rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.01em; }
     .card-meta { display: flex; justify-content: center; align-items: center; gap: 6px; font-size: 0.68rem; color: var(--text-dim); margin-top: 5px; flex-wrap: wrap; font-weight: 600; }
@@ -271,6 +434,11 @@
     .badge-rarity[data-tier="gold"] { background: rgba(250, 204, 21, 0.16); color: #fde68a; border-color: rgba(250, 204, 21, 0.3); }
     .badge-rarity[data-tier="rose"] { background: rgba(236, 72, 153, 0.16); color: #f9a8d4; border-color: rgba(236, 72, 153, 0.3); }
     .badge-rarity[data-tier="teal"]  { background: rgba(52, 211, 153, 0.16); color: #6ee7b7; border-color: rgba(52, 211, 153, 0.3); }
+    .badge-rarity[data-tier="tg"], .badge-tg {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(236, 72, 153, 0.22));
+      color: #fbcfe8;
+      border-color: rgba(236, 72, 153, 0.4);
+    }
 
     .btn-add {
       margin-top: 10px;
@@ -558,52 +726,194 @@
       background: #ef4444;
       color: white;
     }
+
+    .btn-page {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 99px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-family: inherit;
+      font-weight: 600;
+    }
+
+    .btn-page:hover { color: var(--text-main); background: rgba(255,255,255,0.08); }
+
+    .auth-modal {
+      background: linear-gradient(180deg, rgba(24, 28, 52, 0.98), rgba(14, 18, 36, 0.98));
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 28px 24px 22px;
+      max-width: 400px;
+      width: 92%;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.55), 0 0 40px rgba(124,111,242,0.18);
+    }
+
+    .auth-modal h2 {
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+
+    .auth-modal .auth-lead {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+      line-height: 1.45;
+    }
+
+    .auth-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; width: 100%; }
+
+    .auth-field label { font-size: 0.72rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.04em; }
+
+    .auth-field input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      background: rgba(255,255,255,0.05);
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .auth-field input:focus { border-color: var(--accent); }
+
+    .auth-error {
+      min-height: 1.2em;
+      font-size: 0.78rem;
+      color: var(--danger);
+      margin-bottom: 10px;
+    }
+
+    .btn-auth-submit {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background: var(--accent-grad);
+      color: #fff;
+      font-family: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px var(--accent-glow);
+    }
+
+    .auth-switch {
+      margin-top: 14px;
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .auth-switch button {
+      background: none;
+      border: none;
+      color: #c4b5fd;
+      font-family: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .binder-lock {
+      display: none;
+      text-align: center;
+      padding: 72px 20px;
+      border: 1px dashed var(--card-border);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .binder-lock.visible { display: block; }
+
+    .binder-lock h3 { margin: 8px 0 6px; }
+
+    .binder-lock p { color: var(--text-muted); font-size: 0.88rem; max-width: 420px; margin: 0 auto 18px; }
+
+    @media (max-width: 720px) {
+      header { padding: 12px 16px 14px; }
+      main { padding: 0 16px; }
+      .brand h1 { font-size: 1.05rem; }
+    }
   </style>
 </head>
 <body>
-
   <header>
     <div class="header-top">
       <div class="brand">
         <div class="brand-icon">🎴</div>
         <div>
-          <h1>Pokémon Vault & Binder</h1>
+          <h1>Pokémon Vault</h1>
           <div class="brand-sub">Collection Tracker</div>
         </div>
       </div>
 
-      <div class="tab-buttons">
-        <button class="tab-btn active" onclick="switchTab(event, 'tracker')">Card Tracker</button>
-        <button class="tab-btn" onclick="switchTab(event, 'binder')">Virtual Binder (<span id="binderCount">0</span>)</button>
+      <div class="header-actions">
+        <div class="tab-buttons header-tabs">
+          <button class="tab-btn active" type="button" onclick="switchTab(event, 'tracker')">Card Tracker</button>
+          <button class="tab-btn" type="button" onclick="switchTab(event, 'binder')">Binder (<span id="binderCount">0</span>)</button>
+        </div>
+        <div class="account-area">
+          <div id="signedOutBar">
+            <button class="btn-login" type="button" onclick="openAuthModal()">Log in</button>
+          </div>
+          <div id="signedInBar" hidden>
+            <div class="user-chip">
+              <div class="user-avatar" id="userAvatar">?</div>
+              <span class="user-email" id="userEmailLabel">Signed in</span>
+            </div>
+            <button class="btn-logout" type="button" onclick="handleLogout()">Log out</button>
+          </div>
+        </div>
       </div>
     </div>
 
     <div id="trackerControls" class="controls">
       <div class="search-box">
         <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-        <input type="text" id="searchInput" placeholder="Search Pokémon or Card ID..." oninput="filterAndSortCards()">
+        <input type="text" id="searchInput" placeholder="Search name, ID, or “trainer gallery”..." oninput="filterAndSortCards()">
       </div>
 
-      <select id="sortFilter" onchange="filterAndSortCards()">
-        <option value="idAsc">Card ID (A - Z)</option>
-        <option value="nameAsc">Name (A - Z)</option>
-      </select>
+      <label class="filter-field">
+        <span>Sort</span>
+        <select id="sortFilter" onchange="filterAndSortCards()">
+          <option value="idAsc">Card ID (A - Z)</option>
+          <option value="nameAsc">Name (A - Z)</option>
+        </select>
+      </label>
 
-      <select id="setFilter" onchange="filterAndSortCards()">
-        <option value="">All Sets (Excludes PTCGP)</option>
-      </select>
+      <label class="filter-field">
+        <span>Set</span>
+        <select id="setFilter" onchange="filterAndSortCards()">
+          <option value="">All Sets (Excludes PTCGP)</option>
+        </select>
+      </label>
 
-      <select id="rarityFilter" onchange="fetchByRarity()">
-        <option value="">All Rarities</option>
-        <option value="Illustration Rare">Illustration Rare (IR)</option>
-        <option value="Special Illustration Rare">Special Illustration Rare (SIR)</option>
-        <option value="Trainer Gallery">Trainer Gallery (TG)</option>
-        <option value="Hyper Rare">Hyper Rare (Gold)</option>
-        <option value="Ultra Rare">Ultra Rare / Full Art</option>
-        <option value="Secret Rare">Secret Rare</option>
-        <option value="Double Rare">Double Rare (ex/V)</option>
-        <option value="Promo">Promo</option>
-      </select>
+      <label class="filter-field">
+        <span>Rarity</span>
+        <select id="rarityFilter" onchange="fetchByRarity()">
+          <option value="">All Rarities</option>
+          <option value="Trainer Gallery">Trainer Gallery (TG)</option>
+          <option value="Illustration Rare">Illustration Rare (IR)</option>
+          <option value="Special Illustration Rare">Special Illustration Rare (SIR)</option>
+          <option value="Hyper Rare">Hyper Rare (Gold)</option>
+          <option value="Ultra Rare">Ultra Rare / Full Art</option>
+          <option value="Secret Rare">Secret Rare</option>
+          <option value="Double Rare">Double Rare (ex/V)</option>
+          <option value="Promo">Promo</option>
+        </select>
+      </label>
+
+      <div class="quick-filters">
+        <button type="button" class="chip active" data-rarity="" onclick="applyQuickRarity('')">All</button>
+        <button type="button" class="chip chip-tg" data-rarity="Trainer Gallery" onclick="applyQuickRarity('Trainer Gallery')">Trainer Gallery</button>
+        <button type="button" class="chip" data-rarity="Illustration Rare" onclick="applyQuickRarity('Illustration Rare')">IR</button>
+        <button type="button" class="chip" data-rarity="Special Illustration Rare" onclick="applyQuickRarity('Special Illustration Rare')">SIR</button>
+        <button type="button" class="chip" data-rarity="Hyper Rare" onclick="applyQuickRarity('Hyper Rare')">Gold</button>
+      </div>
     </div>
 
     <div id="binderControls" class="controls view-panel">
@@ -628,6 +938,13 @@
     </div>
 
     <div id="binderPanel" class="view-panel">
+      <div id="binderGuestLock" class="binder-lock visible">
+        <div class="empty-state-icon">🔒</div>
+        <h3>Your binder lives on your account</h3>
+        <p>Log in or create an account to add cards, rearrange pages, and sync across devices.</p>
+        <button class="btn-login" type="button" onclick="openAuthModal('signup')">Create account</button>
+      </div>
+      <div id="binderWorkspace" hidden>
       <div class="stats-bar">
         <span id="binderStats">Page 1</span>
       </div>
@@ -635,15 +952,16 @@
       <div class="binder-page" id="binderPage"></div>
 
       <div class="binder-pagination">
-        <button class="tab-btn" 
+        <button class="btn-page" type="button"
                 onclick="changeBinderPage(-1)" 
                 ondragover="handlePageNavDragOver(event, -1)">Previous Page</button>
         
-        <span id="pageIndicator" style="font-size:0.875rem; color:var(--text-muted);">Page 1 of 1</span>
+        <span id="pageIndicator">Page 1 of 1</span>
         
-        <button class="tab-btn" 
+        <button class="btn-page" type="button"
                 onclick="changeBinderPage(1)" 
                 ondragover="handlePageNavDragOver(event, 1)">Next Page</button>
+      </div>
       </div>
     </div>
   </main>
@@ -670,11 +988,36 @@
     </div>
   </div>
 
+  <div id="authModal" class="modal-overlay" onclick="closeAuthModal(event)">
+    <div class="modal-content auth-modal" onclick="event.stopPropagation()">
+      <button class="modal-close" type="button" onclick="closeAuthModal()">✕</button>
+      <h2 id="authTitle">Log in</h2>
+      <p class="auth-lead" id="authLead">Sign in to save a personal binder that syncs with your account.</p>
+      <form id="authForm" onsubmit="submitAuthForm(event)">
+        <div class="auth-field">
+          <label for="authEmail">Email</label>
+          <input type="email" id="authEmail" autocomplete="email" required>
+        </div>
+        <div class="auth-field">
+          <label for="authPassword">Password</label>
+          <input type="password" id="authPassword" autocomplete="current-password" minlength="6" required>
+        </div>
+        <div class="auth-error" id="authError"></div>
+        <button class="btn-auth-submit" id="authSubmit" type="submit">Log in</button>
+      </form>
+      <div class="auth-switch">
+        <span id="authSwitchText">Need an account?</span>
+        <button type="button" id="authSwitchBtn" onclick="toggleAuthMode()">Sign up</button>
+      </div>
+    </div>
+  </div>
+
   <div id="toastHost"></div>
 
   <script>
     // Global State Management
     let allCards = [];
+    let catalogCards = [];
     let filteredCards = [];
     let myBinder = [];
     let currentPage = 1;
@@ -687,7 +1030,11 @@
     let draggedIndex = null;
     let pageNavTimer = null;
     let selectedCardIndex = null;
-    let db;
+    let idb;
+    let currentUser = null;
+    let authMode = 'login';
+    let dbReadyResolve;
+    const dbReady = new Promise((resolve) => { dbReadyResolve = resolve; });
 
     // ==========================================
     // 1. IndexedDB Local Storage
@@ -696,22 +1043,29 @@
       return new Promise((resolve, reject) => {
         const request = indexedDB.open("PokemonBinderDB", 1);
         request.onupgradeneeded = (e) => {
-          db = e.target.result;
-          if (!db.objectStoreNames.contains("binderStore")) {
-            db.createObjectStore("binderStore", { keyPath: "slotIndex" });
+          idb = e.target.result;
+          if (!idb.objectStoreNames.contains("binderStore")) {
+            idb.createObjectStore("binderStore", { keyPath: "slotIndex" });
           }
         };
         request.onsuccess = (e) => {
-          db = e.target.result;
-          resolve(db);
+          idb = e.target.result;
+          resolve(idb);
         };
         request.onerror = (e) => reject("Database error: " + e.target.errorCode);
       });
     }
 
     async function saveBinderToDB() {
-      if (!db) return;
-      const tx = db.transaction("binderStore", "readwrite");
+      await saveLocalBinder();
+      if (currentUser && typeof window.saveCloudBinder === "function") {
+        await window.saveCloudBinder(myBinder);
+      }
+    }
+
+    async function saveLocalBinder() {
+      if (!idb) return;
+      const tx = idb.transaction("binderStore", "readwrite");
       const store = tx.objectStore("binderStore");
       store.clear();
       myBinder.forEach((card, idx) => {
@@ -722,9 +1076,9 @@
     }
 
     async function loadBinderFromDB() {
-      if (!db) return [];
+      if (!idb) return [];
       return new Promise((resolve) => {
-        const tx = db.transaction("binderStore", "readonly");
+        const tx = idb.transaction("binderStore", "readonly");
         const store = tx.objectStore("binderStore");
         const request = store.getAll();
         request.onsuccess = () => {
@@ -735,6 +1089,12 @@
           resolve(loadedBinder);
         };
       });
+    }
+
+    async function clearLocalBinder() {
+      if (!idb) return;
+      const tx = idb.transaction("binderStore", "readwrite");
+      tx.objectStore("binderStore").clear();
     }
 
     // ==========================================
@@ -750,10 +1110,66 @@
       return pocketPattern.test(setId) || pocketPattern.test(id);
     }
 
+    function isTrainerGalleryCard(card) {
+      if (!card) return false;
+      if (card.isTG === true) return true;
+      const id = String(card.id || '').toLowerCase();
+      const localId = String(card.localId || '').toLowerCase();
+      const setId = String(card.setId || id.split('-')[0] || '').toLowerCase();
+      const rarity = String(card.rarity || '').toLowerCase();
+      if (rarity.includes('trainer gallery')) return true;
+      if (localId.startsWith('tg')) return true;
+      if (setId.endsWith('tg')) return true;
+      if (/-tg\d*/i.test(id)) return true;
+      if (/^[a-z0-9.]+tg-/i.test(id)) return true;
+      return false;
+    }
+
+    function normalizeCard(card, rarityOverride) {
+      if (!card || !card.id) return card;
+      const setId = card.setId || String(card.id).split('-')[0];
+      const localId = card.localId || String(card.id).split('-')[1] || '';
+      const isTG = isTrainerGalleryCard({ ...card, setId, localId });
+      const candidates = card.imageCandidates && card.imageCandidates.length
+        ? card.imageCandidates
+        : buildImageCandidates(card.image, setId, localId, isTG);
+      const rarity = rarityOverride || card.rarity || (isTG ? 'Trainer Gallery' : '');
+      return {
+        ...card,
+        id: card.id,
+        localId,
+        name: card.name || card.id,
+        rarity,
+        setId,
+        isTG,
+        image: card.image || candidates[0] || NO_IMAGE_PLACEHOLDER,
+        imageCandidates: candidates
+      };
+    }
+
+    function cardSetMatches(card, selectedSet) {
+      if (!selectedSet) return true;
+      const setId = String(card.setId || '').toLowerCase();
+      const selected = selectedSet.toLowerCase();
+      if (setId === selected) return true;
+      if (setId === selected + 'tg') return true;
+      if (selected.endsWith('tg') && setId === selected.slice(0, -2)) return true;
+      return false;
+    }
+
+    function matchesSearchQuery(card, searchQuery) {
+      if (!searchQuery) return true;
+      if (card.id.toLowerCase().includes(searchQuery) || card.name.toLowerCase().includes(searchQuery)) return true;
+      if ((searchQuery === 'tg' || searchQuery.includes('trainer gallery') || searchQuery.includes('trainer galer')) && isTrainerGalleryCard(card)) return true;
+      return false;
+    }
+
     async function init() {
       await initDatabase();
-      myBinder = await loadBinderFromDB();
+      dbReadyResolve();
+      myBinder = [];
       updateBinderCount();
+      updateAuthUI();
 
       try {
         const setsResponse = await fetch("https://api.tcgdex.net/v2/en/sets");
@@ -917,6 +1333,103 @@
       host.appendChild(el);
       setTimeout(() => el.remove(), 2000);
     }
+
+    function updateAuthUI() {
+      const signedOut = document.getElementById('signedOutBar');
+      const signedIn = document.getElementById('signedInBar');
+      const lock = document.getElementById('binderGuestLock');
+      const workspace = document.getElementById('binderWorkspace');
+      if (currentUser) {
+        signedOut.hidden = true;
+        signedIn.hidden = false;
+        const email = currentUser.email || 'Signed in';
+        document.getElementById('userEmailLabel').textContent = email;
+        document.getElementById('userAvatar').textContent = email.charAt(0).toUpperCase();
+        lock.classList.remove('visible');
+        workspace.hidden = false;
+      } else {
+        signedOut.hidden = false;
+        signedIn.hidden = true;
+        lock.classList.add('visible');
+        workspace.hidden = true;
+      }
+    }
+
+    function requireAuth() {
+      if (currentUser) return true;
+      openAuthModal();
+      showToast('Log in to save your binder', 'remove');
+      return false;
+    }
+
+    function openAuthModal(mode) {
+      if (mode) authMode = mode;
+      setAuthMode(authMode);
+      document.getElementById('authError').textContent = '';
+      document.getElementById('authModal').classList.add('active');
+      document.getElementById('authEmail').focus();
+    }
+
+    function closeAuthModal(e) {
+      if (e && e.target !== e.currentTarget && e.type === 'click' && !e.target.classList.contains('modal-close')) return;
+      document.getElementById('authModal').classList.remove('active');
+    }
+
+    function toggleAuthMode() {
+      authMode = authMode === 'login' ? 'signup' : 'login';
+      setAuthMode(authMode);
+    }
+
+    function setAuthMode(mode) {
+      authMode = mode;
+      const isSignup = mode === 'signup';
+      document.getElementById('authTitle').textContent = isSignup ? 'Create account' : 'Log in';
+      document.getElementById('authLead').textContent = isSignup
+        ? 'Create an account so your binder is saved to the cloud.'
+        : 'Sign in to save a personal binder that syncs with your account.';
+      document.getElementById('authSubmit').textContent = isSignup ? 'Sign up' : 'Log in';
+      document.getElementById('authSwitchText').textContent = isSignup ? 'Already have an account?' : 'Need an account?';
+      document.getElementById('authSwitchBtn').textContent = isSignup ? 'Log in' : 'Sign up';
+      document.getElementById('authPassword').autocomplete = isSignup ? 'new-password' : 'current-password';
+    }
+
+    async function submitAuthForm(e) {
+      e.preventDefault();
+      document.getElementById('authError').textContent = '';
+      if (authMode === 'signup') {
+        await handleSignUp();
+      } else {
+        await handleLogin();
+      }
+    }
+
+    window.applyAuthUser = async function(user) {
+      await dbReady;
+      const wasLoggedIn = !!currentUser;
+      currentUser = user;
+      updateAuthUI();
+      if (user) {
+        closeAuthModal();
+        const cloud = typeof window.loadCloudBinder === 'function' ? await window.loadCloudBinder() : [];
+        myBinder = Array.isArray(cloud) ? cloud : [];
+        await saveLocalBinder();
+        updateBinderCount();
+        if (filteredCards.length) renderBatch();
+        renderBinderPage();
+      } else if (wasLoggedIn) {
+        myBinder = [];
+        await clearLocalBinder();
+        updateBinderCount();
+        if (filteredCards.length) renderBatch();
+        renderBinderPage();
+      }
+    };
+
+    window.showAuthError = function(message) {
+      const el = document.getElementById('authError');
+      if (el) el.textContent = message;
+      showToast(message, 'remove');
+    };
 
     async function fetchByRarity() {
       const selectedRarity = document.getElementById("rarityFilter").value;
@@ -1152,6 +1665,7 @@
     }
 
     function toggleBinderCard(cardId) {
+      if (!requireAuth()) return;
       const card = allCards.find(c => c.id === cardId) || filteredCards.find(c => c.id === cardId);
       if (!card) return;
 
@@ -1273,6 +1787,7 @@
     }
 
     function moveCardFromModal() {
+      if (!requireAuth()) return;
       if (selectedCardIndex === null) return;
       const targetPage = parseInt(document.getElementById("modalPageSelect").value);
       
@@ -1330,6 +1845,7 @@
     function handleDrop(e, targetIndex) {
       e.preventDefault();
       e.currentTarget.classList.remove("drag-over");
+      if (!requireAuth()) return;
 
       if (draggedIndex !== null && draggedIndex !== targetIndex) {
         const temp = myBinder[targetIndex];
@@ -1367,8 +1883,9 @@
     // 7. Navigation Tabs
     // ==========================================
     function switchTab(e, tab) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.header-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('trackerPanel').classList.remove('active');
+      document.getElementById('binderPanel').classList.remove('active');
 
       if (tab === 'tracker') {
         e.target.classList.add('active');
@@ -1379,71 +1896,97 @@
         e.target.classList.add('active');
         document.getElementById('binderPanel').classList.add('active');
         document.getElementById('trackerControls').style.display = 'none';
-        document.getElementById('binderControls').style.display = 'flex';
-        updateBinderGrid();
+        document.getElementById('binderControls').style.display = currentUser ? 'flex' : 'none';
+        if (currentUser) updateBinderGrid();
       }
     }
 
     // Launch Application
     init();
   </script>
-</body>
-<!-- All your HTML content goes above here -->
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// Your Firebase Config
-const firebaseConfig = {
-  apiKey: "AIzaSyAfkwC3oYZp0NAfscaJit-FoCIQBeigFsg",
-  authDomain: "pokemon-card-list-7bec3.firebaseapp.com",
-  projectId: "pokemon-card-list-7bec3",
-  storageBucket: "pokemon-card-list-7bec3.firebasestorage.app",
-  messagingSenderId: "190157618292",
-  appId: "1:190157618292:web:dfb0256825ee92d07fa521",
-  measurementId: "G-VPFPJW0L3Q"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyAfkwC3oYZp0NAfscaJit-FoCIQBeigFsg",
+      authDomain: "pokemon-card-list-7bec3.firebaseapp.com",
+      projectId: "pokemon-card-list-7bec3",
+      storageBucket: "pokemon-card-list-7bec3.firebasestorage.app",
+      messagingSenderId: "190157618292",
+      appId: "1:190157618292:web:dfb0256825ee92d07fa521",
+      measurementId: "G-VPFPJW0L3Q"
+    };
 
-// Initialize Firebase & Firestore
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const firestore = getFirestore(app);
 
-// ==========================================
-// Firebase Firestore Database Functions
-// ==========================================
-
-// Save the binder array to Firestore
-async function saveBinderToDB() {
-  try {
-    // Saves binder array under a document named "mainBinder" in the "binders" collection
-    await setDoc(doc(db, "binders", "mainBinder"), {
-      cards: myBinder
-    });
-    console.log("Binder saved to Firebase!");
-  } catch (error) {
-    console.error("Error saving binder to Firebase:", error);
-  }
-}
-
-// Load the binder array from Firestore
-async function loadBinderFromDB() {
-  try {
-    const docRef = doc(db, "binders", "mainBinder");
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      return docSnap.data().cards || [];
-    } else {
-      console.log("No binder data found in Firebase yet.");
-      return [];
+    function authMessage(error) {
+      const code = error && error.code;
+      if (code === "auth/email-already-in-use") return "That email already has an account.";
+      if (code === "auth/invalid-email") return "Enter a valid email address.";
+      if (code === "auth/weak-password") return "Password must be at least 6 characters.";
+      if (code === "auth/user-not-found" || code === "auth/wrong-password" || code === "auth/invalid-credential") return "Email or password is incorrect.";
+      if (code === "auth/too-many-requests") return "Too many attempts. Try again later.";
+      if (code === "auth/operation-not-allowed") return "Email/password sign-in is not enabled in Firebase Console yet.";
+      return (error && error.message) || "Authentication failed.";
     }
-  } catch (error) {
-    console.error("Error loading binder from Firebase:", error);
-    return [];
-  }
-}
+
+    window.handleSignUp = async function() {
+      const email = document.getElementById("authEmail").value.trim();
+      const password = document.getElementById("authPassword").value;
+      if (!email || !password) return window.showAuthError("Enter email and password");
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+      } catch (error) {
+        window.showAuthError(authMessage(error));
+      }
+    };
+
+    window.handleLogin = async function() {
+      const email = document.getElementById("authEmail").value.trim();
+      const password = document.getElementById("authPassword").value;
+      if (!email || !password) return window.showAuthError("Enter email and password");
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+      } catch (error) {
+        window.showAuthError(authMessage(error));
+      }
+    };
+
+    window.handleLogout = async function() {
+      await signOut(auth);
+    };
+
+    window.saveCloudBinder = async function(cards) {
+      const user = auth.currentUser;
+      if (!user) return;
+      const compact = (cards || []).map(card => card || null);
+      await setDoc(doc(firestore, "binders", user.uid), { cards: compact, updatedAt: Date.now() });
+    };
+
+    window.loadCloudBinder = async function() {
+      const user = auth.currentUser;
+      if (!user) return [];
+      try {
+        const snap = await getDoc(doc(firestore, "binders", user.uid));
+        if (!snap.exists()) return [];
+        const cards = snap.data().cards;
+        return Array.isArray(cards) ? cards : [];
+      } catch (error) {
+        console.error("Error loading binder:", error);
+        return [];
+      }
+    };
+
+    onAuthStateChanged(auth, (user) => {
+      if (typeof window.applyAuthUser === "function") {
+        window.applyAuthUser(user);
+      }
+    });
   </script>
 </body>
-</html>
 </html>
